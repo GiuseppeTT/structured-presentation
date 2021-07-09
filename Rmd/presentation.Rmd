@@ -1,0 +1,305 @@
+---
+title: "Structured R Projects"
+subtitle: "How to organize files in your R projects<br>with {structured}"
+author: "Giuseppe Tinti Tomio"
+date: "`r Sys.Date()`"
+output:
+    xaringan::moon_reader:
+        self_contained: yes
+---
+
+```{r setup, include = FALSE}
+library(structured)
+library(fs)
+
+knitr::opts_chunk$set(
+    echo = FALSE,
+    comment = ""
+)
+
+# Change working directory to a temporary folder
+root <- tempfile()
+dir.create(root)
+knitr::opts_knit$set(
+    root.dir = root
+)
+
+# Add {crayon} support
+# https://github.com/r-lib/crayon/issues/24
+options(crayon.enabled = TRUE)
+old_hooks <- fansi::set_knit_hooks(
+    knitr::knit_hooks,
+    which = c("output", "message", "error")
+)
+```
+
+class: inverse, center, middle
+# Motivation
+
+### Otherwise, this presentation would be a nap opportunity
+
+---
+# Motivation
+
+Have you faced any of these problems lately?
+
+- Feel things are constantly disorganized
+
+- Cannot reproduce your analysis in your friend's computer
+
+- Don't remember how to run your analysis
+
+- Are afraid of changing one line and breaking everything
+
+Then you will benefit from this work!
+
+---
+class: inverse, center, middle
+# Spoilers
+
+### So you know this is really worth it
+
+---
+# Spoilers
+
+In this presentation, I will:
+
+- Introduce RStudio projects
+
+- Teach a powerful, yet simple, project template
+
+- Show how to extend it (e.g. `{shiny}` apps)
+
+- Discuss a bit about version control
+
+- Mention some tools for advanced users
+
+---
+class: inverse, center, middle
+# Enough! Let's start
+
+---
+# Project structure
+
+- Project structure is a technical name for how you organize your files in your project
+
+- The goal is to **save time** by enforcing **organization**
+
+- Always aim for the simplest structure that does the job
+
+.footnote[You can find examples of projects that follow the structures [here](https://github.com/GiuseppeTT/R-Project-Structure/tree/main/example).]
+
+---
+class: inverse, center, middle
+# Let's meet our structures!
+
+---
+class: inverse, center, middle
+# No structure
+
+### Because everything starts as a draft
+
+---
+# No structure
+
+```{r}
+dir_create("no-structure")
+file_touch(c(
+    "no-structure/data.csv",
+    "no-structure/professor-instructions.pdf",
+    "no-structure/pretty-figure.png",
+    "no-structure/analysis.R",
+    "no-structure/no-structure.Rproj"
+))
+dir_tree("no-structure", all = TRUE)
+```
+
+.footnote[You can find more information about RStudio project [here](https://www.tidyverse.org/blog/2017/12/workflow-vs-script/), [here](https://r4ds.had.co.nz/workflow-projects.html) and [here](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects).]
+
+---
+class: inverse, center, middle
+# Basic template
+
+### 80% of results for 20% of effort
+
+---
+# Basic template
+
+```{r}
+structure_project(
+    "basic-project",
+    level = "Basic",
+    type = "Script"
+)
+dir_tree("basic-project", all = TRUE)
+```
+
+---
+class: inverse, center, middle
+# Basic template extensions
+
+### Only a Sith deals in absolutes
+
+---
+# Extensions: subfolders
+
+```{r}
+structure_project(
+    "basic-project",
+    level = "Basic",
+    type = "Script"
+)
+dir_tree("basic-project", all = TRUE)
+```
+
+---
+# Extensions: R Markdown (simplified)
+
+```{r}
+structure_project(
+    "r-markdown-simplified-project",
+    level = "Basic",
+    type = "R Markdown (Simplified)"
+)
+dir_tree("r-markdown-simplified-project", all = TRUE)
+```
+
+---
+# Extensions: R Markdown
+
+```{r}
+structure_project(
+    "r-markdown-project",
+    level = "Basic",
+    type = "R Markdown"
+)
+dir_tree("r-markdown-project", all = TRUE)
+```
+
+---
+# Extensions: R Markdown
+
+Remember to set the "Knit Directory" option to "Project Directory" so your R Markdown files will knit relative to the project folder instead of `Rmd/`
+
+```{r}
+knitr::include_graphics("../inst/image/knit-directory-options.png", error = FALSE)
+```
+
+---
+# Extensions: shiny
+
+```{r}
+structure_project(
+    "shiny-project",
+    level = "Basic",
+    type = "Shiny"
+)
+dir_tree("shiny-project", all = TRUE)
+```
+
+.footnote[You can find an example of a shiny app [here](https://shiny.rstudio.com/gallery/radiant.html).]
+
+---
+class: inverse, center, middle
+# Intermediate template
+
+### You don't need it until you do
+
+---
+# Intermediate template
+
+```{r}
+structure_project(
+    "intermediate-project",
+    level = "Intermediate",
+    type = "None"
+)
+dir_tree("intermediate-project", all = TRUE)
+```
+
+---
+# Intermediate template
+
+Version control:
+
+- Version control is a technical name for git/GitHub
+
+- Basicaly a `CTRL+Z` on steroids
+
+- Solves problems like `Project_v3_final_truly_final_version2.zip`
+
+- Essential for teamwork coding
+
+- Great for sharing your work!
+
+.footnote[You can find more information about git and GitHub [here](https://happygitwithr.com/), [here](https://r-pkgs.org/git.html) and [here](https://guides.github.com/activities/hello-world/).]
+
+---
+class: inverse, center, middle
+# Advanced structure
+
+### A different way to think, a stronger way to code
+
+---
+# Advanced structure
+
+Use the package structure (yeah, not intuitive):
+
+- Established structure
+
+- Free dependency management with `devtools::install_deps()`
+
+- Access to a lot of useful packages:
+
+    - `{devtools}` for development
+
+    - `{roxygen2}` for documentation
+
+    - `{testthat}` for unit testing
+
+- Access to a lot of pre-made solutions
+
+- Easy to share with `devtools::install_github("repository/project")`
+
+.footnote[You can find more information about the package structure [here](https://r-pkgs.org/).]
+
+---
+# Advanced structure
+
+Some advanced tools:
+- `{here}` to build reliable relative paths
+
+- `{usethis}` to setup project
+
+- `{targets}` to structure analysis
+
+- `{renv}` to manage R packages strictly
+
+- `{lintr}` to enforce code consistency
+
+- `{rsconnect}` and/or GitHub Pages to host presentations, reports, dashboards, apis, etc
+
+- `docker` to solve **all** dependency problems
+
+- GitHub Actions to automate everything above
+
+---
+class: inverse, center, middle
+# Key takeaways
+
+### The only thing here you need to pay attention to
+
+---
+# Key takeaways
+
+Key takeaways:
+
+- If your project is going to take more than one **day**, use at least the **basic** structure
+
+- If your project is going to take more than one **coder**, try to use at least the **intermediate** structure
+
+- If your project is going to take **a lot of** time and/or people, consider the **advanced** structure
+
+- Extend them as necessary, they are flexible!
+
+- BUT, don't overcomplicate
